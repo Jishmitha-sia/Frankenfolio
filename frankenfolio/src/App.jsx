@@ -32,6 +32,7 @@ export default function App() {
   const [sortConfig, setSortConfig] = useState({ key: 'market_cap', direction: 'desc' });
   const [usdInput, setUsdInput] = useState('1000');
   const [assetLimit, setAssetLimit] = useState(10);
+  const [showWatchlistOnly, setShowWatchlistOnly] = useState(false);
   
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -76,6 +77,10 @@ export default function App() {
   const sortedAndFilteredCoins = useMemo(() => {
     let processableCoins = coins ? [...coins] : [];
     
+    if (showWatchlistOnly) {
+      processableCoins = processableCoins.filter(coin => watchlist.includes(coin.id));
+    }
+
     if (searchTerm) {
       processableCoins = processableCoins.filter(coin =>
         coin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -103,7 +108,7 @@ export default function App() {
     });
 
     return processableCoins;
-  }, [coins, searchTerm, sortConfig, watchlist]);
+  }, [coins, searchTerm, sortConfig, watchlist, showWatchlistOnly]);
 
   const SortIcon = ({ columnKey }) => {
     if (sortConfig.key !== columnKey) return <ArrowDown size={14} className="opacity-0 group-hover:opacity-30 transition-opacity" />;
@@ -174,17 +179,29 @@ export default function App() {
         </header>
 
         <main className="flex-1 flex flex-col">
-          <div className="relative w-full max-w-2xl mx-auto mb-10 group animate-in zoom-in-95 duration-500 delay-150">
-            <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-              <Search className="text-slate-400 group-focus-within:text-brand-500 transition-colors" size={22} />
+          <div className="flex flex-col sm:flex-row gap-4 w-full max-w-3xl mx-auto mb-10 group animate-in zoom-in-95 duration-500 delay-150">
+            <div className="relative flex-1">
+              <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                <Search className="text-slate-400 group-focus-within:text-brand-500 transition-colors" size={22} />
+              </div>
+              <input 
+                type="text"
+                placeholder="Search assets by name or ticker..."
+                className="w-full py-5 pl-14 pr-6 rounded-3xl border border-light-border dark:border-dark-border bg-white/50 dark:bg-dark-surface/50 backdrop-blur-md outline-none focus:ring-2 focus:ring-brand-500/50 shadow-sm hover:shadow-md transition-all text-lg font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            <input 
-              type="text"
-              placeholder="Search assets by name or ticker..."
-              className="w-full py-5 pl-14 pr-6 rounded-3xl border border-light-border dark:border-dark-border bg-white/50 dark:bg-dark-surface/50 backdrop-blur-md outline-none focus:ring-2 focus:ring-brand-500/50 shadow-sm hover:shadow-md transition-all text-lg font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <button 
+              onClick={() => setShowWatchlistOnly(!showWatchlistOnly)}
+              className={`px-8 py-4 sm:py-0 rounded-3xl border font-bold flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md ${
+                showWatchlistOnly 
+                  ? 'bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/50' 
+                  : 'bg-white/50 dark:bg-dark-surface/50 border-light-border dark:border-dark-border text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+            >
+              {showWatchlistOnly ? "Back to Live Feed" : "Watchlist"}
+            </button>
           </div>
 
           {isError && (
@@ -255,8 +272,17 @@ export default function App() {
                       <tr>
                         <td colSpan="5" className="px-6 py-20 text-center text-slate-500 dark:text-slate-400">
                           <Search size={48} className="mx-auto mb-4 opacity-20" />
-                          <p className="text-xl font-medium text-slate-600 dark:text-slate-300">No assets found matching "{searchTerm}"</p>
-                          <p className="mt-2 text-sm">Try searching for returning assets or clear filters.</p>
+                          {showWatchlistOnly && watchlist.length === 0 ? (
+                            <>
+                              <p className="text-xl font-medium text-slate-600 dark:text-slate-300">Your Watchlist is empty.</p>
+                              <p className="mt-2 text-sm">Return to the Live Feed and click the star icon next to an asset to save it here.</p>
+                            </>
+                          ) : (
+                            <>
+                              <p className="text-xl font-medium text-slate-600 dark:text-slate-300">No assets found {searchTerm ? `matching "${searchTerm}"` : ''}</p>
+                              <p className="mt-2 text-sm">Try searching for returning assets or clear filters.</p>
+                            </>
+                          )}
                         </td>
                       </tr>
                     ) : (
@@ -357,7 +383,7 @@ export default function App() {
                     className="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold bg-white dark:bg-dark-bg border border-light-border dark:border-dark-border text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 hover:border-brand-500/50 hover:shadow-md transition-all active:scale-95 disabled:opacity-50"
                   >
                     <Layers size={16} />
-                    {isFetching ? "Digging deeper..." : "Expand Dataset"}
+                    {isFetching ? "Syncing..." : "Load More"}
                   </button>
                 </div>
               )}
