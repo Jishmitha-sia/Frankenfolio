@@ -1,12 +1,10 @@
-# 🧪 ApexMarket Dashboard (Frankenfolio)
+# ApexMarket Dashboard (Frankenfolio)
 
-> A premium, highly-interactive cryptocurrency telemetry dashboard styled with a sophisticated "glassmorphism" design system.
-
-![ApexMarket Dashboard](frankenfolio/public/favicon.svg) <!-- Replace with an actual screenshot of the app in your repo -->
+> A premium, highly-interactive cryptocurrency telemetry dashboard 
 
 ApexMarket fetches live market intelligence and provides instantaneous tracking of top cryptocurrency assets. It features automated network syncing, 7-day sparkline visualizations, personal persistent watchlists, and algorithmic column sorting.
 
-## ✨ Elite Features
+## Features
 
 *   **Live Asset Telemetry & Sparklines:** Tracks top Cryptocurrencies dynamically fetched via the CoinGecko API. Integrated `recharts` paints beautiful 7-day trailing price trajectories.
 *   **Global Market Ticker**: Always-on visibility into sweeping market vitals—Active Crypto counts, BTC/ETH Dominance, and trading volumes—centered dynamically at the top of the interface.
@@ -18,7 +16,7 @@ ApexMarket fetches live market intelligence and provides instantaneous tracking 
 *   **Offline Grace:** Specialized `navigator.onLine` interceptions replace console errors with elegant, user-facing telemetry interruption warnings.
 *   **Custom Dark/Light Mode:** Fully-typed Tailwind CSS v4 custom variants provide a frictionless toggle between blinding contrast and sleek, glowing darkness.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 *   **Framework:** React 19 (via Vite)
 *   **State & Sync:** `@tanstack/react-query` (Caching, Deduplication, Auto-sync)
@@ -26,7 +24,7 @@ ApexMarket fetches live market intelligence and provides instantaneous tracking 
 *   **Graphs:** `recharts` for highly-performant SVG inline rendering
 *   **Icons:** `lucide-react`
 
-## 🚀 Getting Started
+## Getting Started
 
 To spin up your own instance of ApexMarket locally, ensure you have Node.js installed on your machine.
 
@@ -47,7 +45,7 @@ To spin up your own instance of ApexMarket locally, ensure you have Node.js inst
    npm run dev
    ```
 
-## 🏗 Project Architecture Highlight
+## Project Architecture Highlight
 
 - `/frankenfolio/src/api/cryptoApi.js` — All external fetch logic and error routing is rigidly abstracted from UI components here for cleanliness.
 - `/frankenfolio/src/hooks/useWatchlist.js` — Custom local storage hook for cleanly managing array state syncing.
