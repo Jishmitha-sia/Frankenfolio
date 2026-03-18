@@ -150,7 +150,7 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white group cursor-default">
-                Apex<span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-500 to-emerald-400 group-hover:animate-pulse transition-all inline-block hover:scale-105 origin-left">Market</span>
+                Franken<span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-500 to-emerald-400 group-hover:animate-pulse transition-all inline-block hover:scale-105 origin-left">folio</span>
               </h1>
               <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest">
                 Real-time Asset Intelligence

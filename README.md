@@ -1,8 +1,8 @@
-# ApexMarket Dashboard (Frankenfolio)
+# Frankenfolio Dashboard
 
 > A premium, highly-interactive cryptocurrency telemetry dashboard 
 
-ApexMarket fetches live market intelligence and provides instantaneous tracking of top cryptocurrency assets. It features automated network syncing, 7-day sparkline visualizations, personal persistent watchlists, and algorithmic column sorting.
+Frankenfolio fetches live market intelligence and provides instantaneous tracking of top cryptocurrency assets. It features automated network syncing, 7-day sparkline visualizations, personal persistent watchlists, and algorithmic column sorting.
 
 ## Features
 
@@ -26,7 +26,7 @@ ApexMarket fetches live market intelligence and provides instantaneous tracking 
 
 ## Getting Started
 
-To spin up your own instance of ApexMarket locally, ensure you have Node.js installed on your machine.
+To spin up your own instance of Frankenfolio locally, ensure you have Node.js installed on your machine.
 
 1. **Clone the repository:**
    ```bash
