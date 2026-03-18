@@ -121,9 +121,9 @@ export default function App() {
       </div>
 
       {globalData && (
-        <div className="relative z-10 w-full bg-slate-900 text-white dark:bg-black/80 border-b border-white/10 overflow-hidden shadow-sm text-[11px] font-mono tracking-widest sm:text-xs">
-          <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between opacity-80 animate-in slide-in-from-top duration-500">
-            <div className="flex items-center gap-6 overflow-x-auto whitespace-nowrap no-scrollbar">
+        <div className="relative z-10 w-full bg-slate-900 text-white dark:bg-black/80 border-b border-light-border dark:border-dark-border overflow-hidden shadow-sm text-[11px] font-mono tracking-widest sm:text-xs">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-center opacity-90 animate-in slide-in-from-top duration-500">
+            <div className="flex items-center justify-center gap-8 overflow-x-auto whitespace-nowrap no-scrollbar w-full">
               <span className="flex items-center gap-1.5 text-brand-400">
                 <Globe size={14} /> GLOBAL METRICS
               </span>
@@ -144,8 +144,8 @@ export default function App() {
               <Activity className="text-brand-600 dark:text-brand-500" size={32} strokeWidth={2.5} />
             </div>
             <div>
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-                Apex<span className="text-gradient">Market</span>
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white group cursor-default">
+                Apex<span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-500 to-emerald-400 group-hover:animate-pulse transition-all inline-block hover:scale-105 origin-left">Market</span>
               </h1>
               <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest">
                 Real-time Asset Intelligence
@@ -260,7 +260,7 @@ export default function App() {
                         </td>
                       </tr>
                     ) : (
-                      sortedAndFilteredCoins?.map((coin) => {
+                      sortedAndFilteredCoins?.map((coin, index) => {
                         const isStarred = watchlist.includes(coin.id);
                         const isPositive = coin.price_change_percentage_24h > 0;
                         
@@ -268,7 +268,8 @@ export default function App() {
                           <tr 
                             key={coin.id} 
                             onClick={() => setSelectedCoin(coin)}
-                            className="hover:bg-slate-50/80 dark:hover:bg-white/5 transition-colors cursor-pointer group"
+                            className="hover:bg-white dark:hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-[0_8px_30px_rgba(57,255,20,0.08)] cursor-pointer group relative z-0 hover:z-10 animate-in fade-in slide-in-from-bottom-8"
+                            style={{ animationFillMode: 'both', animationDelay: `${Math.min(index * 50, 800)}ms` }}
                           >
                             <td className="px-6 py-5 text-center">
                               <button 
