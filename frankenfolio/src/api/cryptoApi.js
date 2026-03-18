@@ -1,13 +1,13 @@
 const BASE_URL = 'https://api.coingecko.com/api/v3';
 
-export const fetchTopCoins = async () => {
+export const fetchTopCoins = async (limit = 10) => {
   if (typeof navigator !== 'undefined' && !navigator.onLine) {
     throw new Error("You appear to be offline. Please check your network connection.");
   }
 
   try {
     const response = await fetch(
-      `${BASE_URL}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=true`
+      `${BASE_URL}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${limit}&page=1&sparkline=true`
     );
 
     if (response.status === 429) {

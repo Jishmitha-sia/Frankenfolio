@@ -2,13 +2,36 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchTopCoins, fetchGlobalData } from './api/cryptoApi';
 import { useWatchlist } from './hooks/useWatchlist';
-import { RefreshCw, Search, Star, Moon, Sun, TrendingUp, TrendingDown, Activity, AlertCircle, X, Info, ArrowUp, ArrowDown, Globe, Calculator, ArrowRightLeft } from 'lucide-react';
+import { RefreshCw, Search, Star, Moon, Sun, TrendingUp, TrendingDown, Activity, AlertCircle, X, Info, ArrowUp, ArrowDown, Globe, Calculator, ArrowRightLeft, Layers } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
+
+// Skeleton Loader Component
+const SkeletonRow = () => (
+  <tr className="animate-pulse border-b border-light-border dark:border-dark-border">
+    <td className="px-6 py-5 text-center"><div className="w-8 h-8 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto"></div></td>
+    <td className="px-6 py-5">
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 bg-slate-200 dark:bg-slate-800 rounded-full"></div>
+        <div className="space-y-2">
+          <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-24"></div>
+          <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-12"></div>
+        </div>
+      </div>
+    </td>
+    <td className="px-6 py-5 text-right"><div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-20 ml-auto"></div></td>
+    <td className="px-6 py-5 text-right flex justify-end gap-3 items-center">
+      <div className="w-24 h-10 bg-slate-200 dark:bg-slate-800 rounded hidden sm:block"></div>
+      <div className="h-7 bg-slate-200 dark:bg-slate-800 rounded-full w-20"></div>
+    </td>
+    <td className="px-6 py-5 text-right hidden md:table-cell"><div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-16 ml-auto"></div></td>
+  </tr>
+);
 
 export default function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'market_cap', direction: 'desc' });
   const [usdInput, setUsdInput] = useState('1000');
+  const [assetLimit, setAssetLimit] = useState(10);
   
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -36,8 +59,8 @@ export default function App() {
   });
 
   const { data: coins, isLoading, isError, error, refetch, isFetching } = useQuery({
-    queryKey: ['topCoins'],
-    queryFn: fetchTopCoins,
+    queryKey: ['topCoins', assetLimit],
+    queryFn: () => fetchTopCoins(assetLimit),
     refetchInterval: 60000, 
     staleTime: 30000,
   });
@@ -64,7 +87,6 @@ export default function App() {
       let aValue = a[sortConfig.key];
       let bValue = b[sortConfig.key];
       
-      // Fallbacks and type handling
       if (sortConfig.key === 'starred') {
         aValue = watchlist.includes(a.id) ? 1 : 0;
         bValue = watchlist.includes(b.id) ? 1 : 0;
@@ -93,13 +115,11 @@ export default function App() {
   return (
     <div className="min-h-screen relative overflow-x-hidden selection:bg-brand-500/30 selection:text-brand-600">
       
-      {/* Background Decorators */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden flex justify-center items-center">
         <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-brand-500/10 dark:bg-brand-500/5 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"></div>
         <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow object-right-bottom" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      {/* Global Market Ticker */}
       {globalData && (
         <div className="relative z-10 w-full bg-slate-900 text-white dark:bg-black/80 border-b border-white/10 overflow-hidden shadow-sm text-[11px] font-mono tracking-widest sm:text-xs">
           <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between opacity-80 animate-in slide-in-from-top duration-500">
@@ -118,7 +138,6 @@ export default function App() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col min-h-screen">
         
-        {/* Header Section */}
         <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6 glass-panel rounded-3xl p-6 lg:p-8 animate-in fade-in slide-in-from-top-4 duration-700">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-brand-500/10 dark:bg-brand-500/20 rounded-2xl shadow-[0_0_15px_rgba(57,255,20,0.2)]">
@@ -137,7 +156,7 @@ export default function App() {
           <div className="flex items-center gap-4 w-full md:w-auto">
             <button 
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-3.5 rounded-2xl bg-slate-100 dark:bg-dark-surface border border-light-border dark:border-dark-border text-slate-600 dark:text-slate-300 hover:scale-105 hover:shadow-lg transition-all flex-shrink-0"
+              className="p-3.5 rounded-2xl bg-white dark:bg-dark-surface border border-light-border dark:border-dark-border text-slate-600 dark:text-slate-300 hover:scale-105 hover:shadow-lg transition-all flex-shrink-0"
               aria-label="Toggle Dark Mode"
             >
               {isDarkMode ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} />}
@@ -154,9 +173,7 @@ export default function App() {
           </div>
         </header>
 
-        {/* Main Content Area */}
         <main className="flex-1 flex flex-col">
-          {/* Search Controls */}
           <div className="relative w-full max-w-2xl mx-auto mb-10 group animate-in zoom-in-95 duration-500 delay-150">
             <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
               <Search className="text-slate-400 group-focus-within:text-brand-500 transition-colors" size={22} />
@@ -170,16 +187,8 @@ export default function App() {
             />
           </div>
 
-          {/* Status Displays */}
-          {isLoading && (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 animate-pulse">
-              <Activity size={48} className="mb-4 text-brand-500 opacity-50" />
-              <p className="text-lg font-mono">Establishing secure connection to markets...</p>
-            </div>
-          )}
-
           {isError && (
-             <div className="mx-auto max-w-2xl w-full bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 p-6 rounded-3xl flex items-start gap-4 shadow-lg">
+             <div className="mx-auto max-w-2xl w-full bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 p-6 rounded-3xl flex items-start gap-4 shadow-lg mb-8">
                <AlertCircle size={28} className="shrink-0 mt-0.5" />
                <div>
                   <h3 className="text-lg font-bold mb-1">Telemetry Interrupted</h3>
@@ -191,8 +200,7 @@ export default function App() {
              </div>
           )}
 
-          {/* Asset Data Table View */}
-          {!isLoading && !isError && (
+          {!isError && (
             <div className="glass-panel rounded-[2rem] overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
               <div className="overflow-x-auto">
                 <table className="w-full text-left whitespace-nowrap">
@@ -241,7 +249,9 @@ export default function App() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-light-border dark:divide-dark-border">
-                    {sortedAndFilteredCoins?.length === 0 ? (
+                    {isLoading && !coins ? (
+                      [...Array(assetLimit)].map((_, i) => <SkeletonRow key={`idx-${i}`} />)
+                    ) : sortedAndFilteredCoins?.length === 0 ? (
                       <tr>
                         <td colSpan="5" className="px-6 py-20 text-center text-slate-500 dark:text-slate-400">
                           <Search size={48} className="mx-auto mb-4 opacity-20" />
@@ -266,12 +276,12 @@ export default function App() {
                                   e.stopPropagation();
                                   toggleWatchlist(coin.id);
                                 }}
-                                className="p-2 -m-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 transition-all outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                                className="p-2 -m-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 transition-all outline-none focus-visible:ring-2 focus-visible:ring-brand-500 bg-transparent border-none appearance-none"
                                 aria-label={isStarred ? "Remove from watchlist" : "Add to watchlist"}
                               >
                                 <Star 
                                   size={22} 
-                                  className={`transition-all duration-300 ${isStarred ? 'text-yellow-400 fill-yellow-400 scale-110 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-400 dark:group-hover:text-slate-500'}`} 
+                                  className={`transition-all duration-300 ${isStarred ? 'text-yellow-400 fill-yellow-400 scale-110 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]' : 'text-slate-300 dark:text-slate-600 group-hover:text-amber-300 dark:group-hover:text-amber-500'}`} 
                                 />
                               </button>
                             </td>
@@ -336,6 +346,20 @@ export default function App() {
                   </tbody>
                 </table>
               </div>
+              
+              {/* Load More Expansion Frame */}
+              {!isLoading && sortedAndFilteredCoins?.length > 0 && assetLimit <= 50 && (
+                <div className="p-4 flex justify-center border-t border-light-border dark:border-dark-border bg-slate-50/30 dark:bg-dark-surface/30">
+                  <button 
+                    onClick={() => setAssetLimit(prev => prev + 10)}
+                    disabled={isFetching}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold bg-white dark:bg-dark-bg border border-light-border dark:border-dark-border text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 hover:border-brand-500/50 hover:shadow-md transition-all active:scale-95 disabled:opacity-50"
+                  >
+                    <Layers size={16} />
+                    {isFetching ? "Digging deeper..." : "Expand Dataset"}
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </main>
@@ -345,7 +369,6 @@ export default function App() {
         </footer>
       </div>
 
-      {/* Modern Slide-over Detail Panel with Currency Calculator */}
       {selectedCoin && (
         <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
           <div 
@@ -391,7 +414,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* NEW: Interactive Currency Calculator */}
                 <div className="p-6 rounded-3xl bg-brand-50/50 dark:bg-brand-500/5 border border-brand-100 dark:border-brand-500/20 shadow-inner">
                   <h3 className="flex items-center gap-2 text-sm font-bold text-brand-600 dark:text-brand-400 mb-4 uppercase tracking-widest">
                     <Calculator size={16} /> Asset Conversion
